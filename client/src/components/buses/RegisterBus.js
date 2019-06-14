@@ -15,11 +15,11 @@ class RegisterBus extends Component {
     super();
     this.state = {
       ownerid: "",
-      name: "1",
-      city: "2",
-      state: "3",
-      zip: "4",
-      route: "5",
+      name: "",
+      city: "",
+      state: "",
+      zip: "",
+      route: "",
       lat: "40.485",
       lon: "-106.8317",
       curlat: "",
