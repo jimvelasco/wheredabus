@@ -7,6 +7,7 @@ const passport = require("passport");
 const path = require("path");
 
 const users = require("./routes/api/users");
+const buses = require("./routes/api/buses");
 // const profile = require("./routes/api/profile");
 // const posts = require("./routes/api/posts");
 
@@ -55,6 +56,7 @@ require("./config/passport")(passport);
 // });
 
 app.use("/api/users", users);
+app.use("/api/buses", buses);
 // app.use("/api/profile", profile);
 // app.use("/api/posts", posts);
 

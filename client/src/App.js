@@ -16,6 +16,7 @@ import Login from "./components/auth/Login";
 
 import BusesMapMain from "./components/buses/BusesMapMain";
 import RegisterBus from "./components/buses/RegisterBus";
+import TrackBus from "./components/buses/TrackBus";
 
 import Dashboard from "./components/dashboard/Dashboard";
 
@@ -31,6 +32,7 @@ function App() {
           <Route exact path="/dashboard" component={Dashboard} />
           <Route exact path="/busesmain" component={BusesMapMain} />
           <Route exact path="/registerbus" component={RegisterBus} />
+          <Route exact path="/trackbus" component={TrackBus} />
 
           {/* <header className="App-header">
             <img src={logo} className="App-logo" alt="logo" />

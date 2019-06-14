@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 
 import { connect } from "react-redux";
-//import { registerUser } from "../../actions/authActions";
+import { registerBus } from "../../actions/busActions";
 
 //import axios from "axios";
 //import classnames from "classnames";
@@ -58,16 +58,21 @@ class RegisterBus extends Component {
   onSubmit(e) {
     e.preventDefault();
 
+    let ownerid = this.props.auth.user.id;
+    console.log(this.props.auth.user);
+    console.log("ownerid", ownerid);
+
     const newBus = {
-      ownerid: this.state.ownerid,
+      ownerid: ownerid,
       name: this.state.name,
       city: this.state.city,
       state: this.state.state,
       zip: this.state.zip,
+      route: this.state.route,
       lat: this.state.lat,
       lon: this.state.lon,
-      curlat: this.state.curlat,
-      curlon: this.state.curlon
+      curlat: "",
+      curlon: ""
     };
 
     // this is the redux way.
@@ -83,7 +88,7 @@ class RegisterBus extends Component {
     //   //.catch(err => console.log(err.response.data)); // to get actual errors from backend
     //   .catch(err => this.setState({ errors: err.response.data })); // to get actual errors from backend
 
-    // this.props.registerUser(newUser, this.props.history);
+    this.props.registerBus(newBus, this.props.history);
   }
 
   render() {
@@ -216,6 +221,6 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  {}
+  { registerBus }
 )(withRouter(RegisterBus));
 // wrap the Register with withRouter so the authAction can use history to redirect

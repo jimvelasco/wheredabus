@@ -51,6 +51,16 @@ class Dashboard extends Component {
             >
               Locate Bus
             </Button>
+            <br />
+            <Button
+              variant="info"
+              className="btn-block"
+              onClick={() => {
+                this.props.history.replace("/trackbus");
+              }}
+            >
+              Track Bus
+            </Button>
             {/* <Button
               variant="info"
               as={Link}
