@@ -69,7 +69,7 @@ class Login extends Component {
         <div className="container xshadow-lg">
           <div className="row">
             <div className="col-md-8 m-auto">
-              <h1 className="display-5 text-center">Sign In</h1>
+              <h1 className="display-5 text-center">Sign In jjv</h1>
 
               <form noValidate onSubmit={this.onSubmit}>
                 <div className="form-group">
@@ -133,7 +133,4 @@ const mapStateToProps = state => ({
 });
 
 // call loginUser in actions file
-export default connect(
-  mapStateToProps,
-  { loginUser }
-)(Login);
+export default connect(mapStateToProps, { loginUser })(Login);
