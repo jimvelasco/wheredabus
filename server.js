@@ -116,6 +116,13 @@ if (process.env.NODE_ENV === "production") {
       .catch(err => console.log(err));
   });
 
+  app.get("/restapi/buses", (req, res) => {
+    Bus.find()
+      .then(buses => res.json(buses))
+      .catch(err => res.status(404).json({ noresults: "No Wildcards found" }));
+    //API logic
+  });
+
   //
 
   // need module path for this imported at top

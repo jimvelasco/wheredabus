@@ -100,7 +100,6 @@ class RegisterBus extends Component {
     // this was used to show user from props
     // const { user } = this.props.auth; // const user = this.props.auth.user
     // this shows user {user ? user.name : null}
-
     // yampa 40.454579 -106.798609
     // eagle ridge 40.455143 -106.808900
     // gondola 40.457226 -106.805936
