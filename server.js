@@ -90,7 +90,7 @@ if (process.env.NODE_ENV === "production") {
 
   app.post("/restapi/bus_markers", (req, res) => {
     const errors = {};
-    let id = req.body.ownerid;
+    //let id = req.body.ownerid;
     let distance = req.body.distance;
     let lat = req.body.lat;
     let lon = req.body.lon;
@@ -118,7 +118,7 @@ if (process.env.NODE_ENV === "production") {
 
   app.get("/restapi/bus_markers/:distance/:lat/:lon", (req, res) => {
     const errors = {};
-    let cat0 = req.params.cat;
+    //let cat0 = req.params.cat;
     // let id = req.body.ownerid;
     let distance = req.params.distance;
     let lat = req.params.lat;
