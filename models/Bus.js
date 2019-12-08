@@ -4,12 +4,28 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 
 // Create Schema
 
+const pointSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    enum: ["Point"],
+    required: true
+  },
+  coordinates: {
+    type: [Number],
+    required: true
+  }
+});
+
 const BusSchema = new Schema({
   ownerid: {
     type: ObjectId,
     required: true
   },
   name: {
+    type: String,
+    required: true
+  },
+  address: {
     type: String,
     required: true
   },
@@ -32,10 +48,15 @@ const BusSchema = new Schema({
     type: Number
   },
   curlat: {
-    type: String
+    type: Number
   },
   curlon: {
-    type: String
+    type: Number
+  },
+
+  location: {
+    type: pointSchema,
+    required: true
   },
 
   date: {
@@ -43,6 +64,8 @@ const BusSchema = new Schema({
     default: Date.now
   }
 });
+
+BusSchema.index({ location: "2dsphere" });
 
 module.exports = Bus = mongoose.model("buses", BusSchema);
 // the users name is used for passport or when

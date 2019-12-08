@@ -15,11 +15,12 @@ class RegisterBus extends Component {
     super();
     this.state = {
       ownerid: "",
-      name: "",
-      city: "",
-      state: "",
-      zip: "",
-      route: "",
+      name: "yampa",
+      address: "2626 Longthong",
+      city: "Steamboat Springs",
+      state: "CO",
+      zip: "80487",
+      route: "Yampa",
       lat: "40.485",
       lon: "-106.8317",
       curlat: "",
@@ -65,14 +66,15 @@ class RegisterBus extends Component {
     const newBus = {
       ownerid: ownerid,
       name: this.state.name,
+      address: this.state.address,
       city: this.state.city,
       state: this.state.state,
       zip: this.state.zip,
       route: this.state.route,
       lat: this.state.lat,
       lon: this.state.lon,
-      curlat: "",
-      curlon: ""
+      curlat: 0,
+      curlon: 0
     };
 
     // this is the redux way.
@@ -99,6 +101,13 @@ class RegisterBus extends Component {
     // const { user } = this.props.auth; // const user = this.props.auth.user
     // this shows user {user ? user.name : null}
 
+    // yampa 40.454579 -106.798609
+    // eagle ridge 40.455143 -106.808900
+    // gondola 40.457226 -106.805936
+    // sunburst 40.447014 -106.805257
+    // walgreens 40.46657, -106.826904
+    // downtown 40.486100, -106.832911
+
     return (
       <div className="register">
         <div className="container">
@@ -116,6 +125,17 @@ class RegisterBus extends Component {
                     value={this.state.name}
                     onChange={this.onChange}
                     error={errors.name}
+                  />
+                </div>
+                <div className="form-group">
+                  <TextFieldGroup
+                    type="text"
+                    label="Address"
+                    placeholder="Address"
+                    name="address"
+                    value={this.state.address}
+                    onChange={this.onChange}
+                    error={errors.address}
                   />
                 </div>
                 <div className="form-group">
@@ -219,8 +239,7 @@ const mapStateToProps = state => ({
 });
 // the state.auth above comes from rootReducer in index.js in reducers.
 
-export default connect(
-  mapStateToProps,
-  { registerBus }
-)(withRouter(RegisterBus));
+export default connect(mapStateToProps, { registerBus })(
+  withRouter(RegisterBus)
+);
 // wrap the Register with withRouter so the authAction can use history to redirect

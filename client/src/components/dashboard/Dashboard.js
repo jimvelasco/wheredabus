@@ -14,7 +14,7 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {}; //shuttles: ["one", "two", "three"] };
-    // console.log("Dashboard props", props);
+    console.log("Dashboard props", props);
   }
   render() {
     const userrole = this.props.auth.user.role;
@@ -88,9 +88,6 @@ const mapStateToProps = state => ({
   errors: state.errors
 });
 
-export default connect(
-  mapStateToProps,
-  {}
-)(Dashboard);
+export default connect(mapStateToProps, {})(Dashboard);
 
 //export default Dashboard;
