@@ -116,6 +116,35 @@ if (process.env.NODE_ENV === "production") {
       .catch(err => console.log(err));
   });
 
+  app.get("/restapi/bus_markers/:distance/:lat/:lon", (req, res) => {
+    const errors = {};
+    let cat0 = req.params.cat;
+    // let id = req.body.ownerid;
+    let distance = req.params.distance;
+    let lat = req.params.lat;
+    let lon = req.params.lon;
+    console.log("we are in post api", id, distance, lat, lon);
+    let query = {
+      location: {
+        $near: {
+          $maxDistance: distance,
+          $geometry: { type: "Point", coordinates: [lon, lat] }
+        }
+      }
+    };
+    Bus.find(query)
+      .then(buses => {
+        if (buses) {
+          //console.log("in api", buses);
+          return res.json(buses);
+        } else {
+          errors.name = "Bus cannot be found";
+          return res.status(400).json(errors);
+        }
+      })
+      .catch(err => console.log(err));
+  });
+
   app.get("/restapi/buses", (req, res) => {
     Bus.find()
       .then(buses => res.json(buses))
