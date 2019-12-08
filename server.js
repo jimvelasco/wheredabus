@@ -94,7 +94,7 @@ if (process.env.NODE_ENV === "production") {
     let distance = req.body.distance;
     let lat = req.body.lat;
     let lon = req.body.lon;
-    console.log("we are in post api", id, distance, lat, lon);
+    // console.log("we are in post api", id, distance, lat, lon);
     let query = {
       location: {
         $near: {
@@ -123,7 +123,7 @@ if (process.env.NODE_ENV === "production") {
     let distance = req.params.distance;
     let lat = req.params.lat;
     let lon = req.params.lon;
-    console.log("we are in post api", id, distance, lat, lon);
+    //  console.log("we are in post api", id, distance, lat, lon);
     let query = {
       location: {
         $near: {
