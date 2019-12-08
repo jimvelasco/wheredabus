@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 
 const path = require("path");
+const Bus = require("./models/Bus");
 
 const users = require("./routes/api/users");
 const buses = require("./routes/api/buses");
@@ -86,6 +87,34 @@ app.use("/api/buses", buses);
 if (process.env.NODE_ENV === "production") {
   // Set static folder
   app.use(express.static("client/build"));
+
+  app.post("/restapi/bus_markers", (req, res) => {
+    const errors = {};
+    let id = req.body.ownerid;
+    let distance = req.body.distance;
+    let lat = req.body.lat;
+    let lon = req.body.lon;
+    console.log("we are in post api", id, distance, lat, lon);
+    let query = {
+      location: {
+        $near: {
+          $maxDistance: distance,
+          $geometry: { type: "Point", coordinates: [lon, lat] }
+        }
+      }
+    };
+    Bus.find(query)
+      .then(buses => {
+        if (buses) {
+          //console.log("in api", buses);
+          return res.json(buses);
+        } else {
+          errors.name = "Bus cannot be found";
+          return res.status(400).json(errors);
+        }
+      })
+      .catch(err => console.log(err));
+  });
 
   //
 
