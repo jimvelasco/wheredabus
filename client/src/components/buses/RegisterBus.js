@@ -4,6 +4,7 @@ import { withRouter } from "react-router-dom";
 
 import { connect } from "react-redux";
 import { registerBus } from "../../actions/busActions";
+import MapLookup from "../common/MapLookup";
 
 //import axios from "axios";
 //import classnames from "classnames";
@@ -30,6 +31,7 @@ class RegisterBus extends Component {
 
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.handleMapClick = this.handleMapClick.bind(this);
   }
 
   componentDidMount() {
@@ -54,6 +56,12 @@ class RegisterBus extends Component {
   onCancelClick(e) {
     e.preventDefault();
     window.location = "/";
+  }
+  handleMapClick(lat, lon) {
+    let slat = lat.toString();
+    let slon = lon.toString();
+    console.log("handlemapclick", lat, lon);
+    this.setState({ lat: lat, lon: lon });
   }
 
   onSubmit(e) {
@@ -95,6 +103,8 @@ class RegisterBus extends Component {
 
   render() {
     const { errors } = this.state;
+    const lat = this.state.lat;
+    const lon = this.state.lon;
     // same as const errors = this.state.errors
 
     // this was used to show user from props
@@ -213,6 +223,11 @@ class RegisterBus extends Component {
                   Cancel
                 </a>
               </form>
+              <MapLookup
+                handleMapClick={this.handleMapClick}
+                // lat={lat}
+                // lon={lon}
+              />
             </div>
           </div>
         </div>

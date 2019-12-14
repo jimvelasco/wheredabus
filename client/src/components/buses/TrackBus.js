@@ -7,13 +7,20 @@ import TextFieldGroup from "../common/TextFieldGroup";
 
 import {
   withGoogleMap,
+  GoogleMapLoader,
   GoogleMap,
   Marker,
-  InfoWindow
+  InfoWindow,
+  LatLngBounds,
+  withScriptjs
 } from "react-google-maps";
 //import { getBusinesses } from "../../actions/advertiseActions";
 
 const posobj = { lat: 40.485, lng: -106.8317 };
+const googleMapURL =
+  "https://maps.googleapis.com/maps/api/js?key=AIzaSyAnVhbl1bPiwiJaIc6hoxWf3MZecJijJEUlibraries=places,geometry";
+
+//const { LatLng, LatLngBounds } = google.maps;
 
 const xdummy_data = [
   { name: "yampa", lat: 40.454579, lng: -106.798609 },
@@ -25,6 +32,7 @@ const xdummy_data = [
 ];
 
 const dummy_data = [
+  { name: "", coordinates: [0, 0] },
   { name: "yampa", coordinates: [-106.798609, 40.454579] },
   { name: "eagle", coordinates: [-106.8089, 40.455143] },
   { name: "gondola", coordinates: [-106.805936, 40.457226] },
@@ -41,7 +49,11 @@ const dummy_data = [
 // downtown 40.486100, -106.832911
 
 const GoogleMapExample = withGoogleMap(props => (
-  <GoogleMap defaultCenter={posobj} defaultZoom={13}>
+  <GoogleMap
+    defaultCenter={posobj}
+    defaultZoom={13}
+    // ref={map => (this._map = map)}
+  >
     {props.markers.map((marker, index) => (
       <Marker
         key={index}
@@ -79,9 +91,11 @@ class TrackBus extends Component {
       cnt: 2,
       location_list: ["one", "two"],
       selected_location: "",
-      distance: 1000,
+      distance: 2000,
+      bounds: null,
       errors: {}
     };
+    this._map = null;
     //console.log(props);
     // console.log("Dashboard props", props);
     let lat = null;
@@ -90,6 +104,7 @@ class TrackBus extends Component {
     this.handleCloseClick = this.handleCloseClick.bind(this);
     this.loadBuses = this.loadBuses.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.doBounds = this.doBounds.bind(this);
 
     //this.getBusLocation = this.getBusLocation.bind(this);
   }
@@ -103,103 +118,12 @@ class TrackBus extends Component {
     //let bl = dummy_data.map
     let bl = dummy_data.map((obj, index) => obj.name);
     this.setState({ location_list: bl });
-    // let link = "/api/buses/find_bus/5d03d5419965471cd70f957d";
-    // console.log("track bus cdm", link);
-    // axios
-    //   .get(link)
-    //   .then(res => {
-    //     let bus = res.data;
-    //     console.log("bus", bus);
-    //     let mary = [];
-    //     let posobj = {
-    //       lat: bus.lat,
-    //       lng: bus.lon,
-    //       name: bus.name,
-    //       id: bus.ownerid,
-    //       adname: bus.route
-    //     };
-    //     mary.push(posobj);
-    //     this.setState({ markers: mary });
-    //   })
-    //   .catch(err => {
-    //     console.log("triggering error in actions", err.message);
-    //   });
-    // setInterval(function() {
-    //   getBusLocation;
-    // }, 3000);
-    //setInterval(() => this.getBusLocation(), 15000);
   }
 
   loadBuses(e) {
     e.preventDefault();
-    let mary = [];
-    let posobj = {
-      lat: 40.482,
-      lng: -106.8317,
-      name: "bus one",
-      id: 1,
-      adname: "Yampa View",
-      addesc: "Service 24x7"
-    };
-    let posobj2 = {
-      lat: 40.485,
-      lng: -106.8317,
-      name: "bus two",
-      id: 2,
-      adname: "Ski Inn",
-      addesc: "Service 8 to 5"
-    };
-    let cposobj = {
-      lat: 40.46657,
-      lng: -106.826904,
-      name: "walgreens",
-      id: 3,
-      adname: "walgreens",
-      addesc: "Weekdays only"
-    };
-    mary.push(posobj);
-    mary.push(posobj2);
-    mary.push(cposobj);
-    //console.log("load buses clicked", mary);
-    //this.setState({ markers: mary });
+
     this.postLoadBuses();
-  }
-
-  getLoadBuses() {
-    //let cnt = this.state.cnt;
-    let ownerid = "5d00680c0919b8453349d5a3";
-    let link = "/api/buses/bus_markers/" + ownerid;
-    //this.setState({ cnt: cnt + 1 });
-
-    console.log("getLoadBuses query", link);
-    let mary = [];
-    axios
-      .get(link)
-      .then(res => {
-        let buses = res.data;
-        console.log("buses", buses);
-        buses.forEach(bus => {
-          //console.log("the bus is", bus);
-          let coords = bus.location.coordinates;
-          //console.log("the coords are ", coords);
-          let lat = bus.lat;
-          let lon = bus.lon;
-          lat = coords[1];
-          lon = coords[0];
-          let posobj = {
-            lat: lat,
-            lng: lon,
-            name: bus.name,
-            id: bus.ownerid,
-            adname: bus.route
-          };
-          mary.push(posobj);
-        });
-        this.setState({ markers: mary });
-      })
-      .catch(err => {
-        console.log("triggering error in actions", err.message);
-      });
   }
 
   postLoadBuses() {
@@ -226,10 +150,10 @@ class TrackBus extends Component {
       lon: coords[0],
       distance: distance
     };
-    console.log("pdata sending", pdata);
+    //console.log("pdata sending", pdata);
     //this.setState({ cnt: cnt + 1 });
 
-    console.log("getLoadBuses query", link);
+    //console.log("getLoadBuses query", link);
     let mary = [];
     //.post("/api/users/register", userData)
     axios
@@ -254,11 +178,47 @@ class TrackBus extends Component {
           };
           mary.push(posobj);
         });
-        this.setState({ markers: mary });
+        const bounds = new window.google.maps.LatLngBounds();
+        mary.map((item, i) => {
+          console.log("loc lat lng", item.lat, item.lng);
+          const loc = new window.google.maps.LatLng(item.lat, item.lng);
+          console.log(loc);
+          bounds.extend(loc);
+        });
+        console.log("bounds", bounds);
+
+        //this.setState({ markers: mary, bounds: bounds });
+        console.log("we are done getting buses");
+        // this._map.fitBounds(bounds);
+        this.setState({ markers: mary, bounds: bounds });
       })
       .catch(err => {
         console.log("triggering error in actions", err.message);
       });
+  }
+
+  doBounds(e) {
+    e.preventDefault();
+    let mary = this.state.markers;
+    const bounds = new window.google.maps.LatLngBounds();
+    mary.map((item, i) => {
+      const loc = new window.google.maps.LatLng(item.lat, item.lng);
+      console.log(loc);
+      bounds.extend(loc);
+    });
+    console.log("bounds", bounds);
+    console.log("bounds", bounds.getCenter());
+    //let tmap = this.refs.gmap;
+    let tmap = this._map;
+    console.log("the tmap is", tmap);
+    //let tb = tmap.getBounds();
+    let tb = tmap.getCenter();
+    console.log("the tb is", tb);
+
+    //console.log(this._map);
+    //this.refs.gmap.fitBounds(bounds);
+
+    //this._map.fitBounds(bounds);
   }
 
   getBusLocation() {
@@ -319,6 +279,7 @@ class TrackBus extends Component {
   handleClick(e) {
     console.log("hc e", e);
     e.preventDefault();
+    //this.map.fitBounds(this.state.bounds);
   }
   handleCloseClick(bizid) {
     //console.log("handleCloseClick e", bizid);
@@ -428,6 +389,14 @@ class TrackBus extends Component {
             >
               Load
             </a>
+            <a
+              href=""
+              className="btn btn-info btn-block mt-4"
+              //onClick={this.onCancelClick.bind(this)}
+              onClick={this.doBounds}
+            >
+              Bounds
+            </a>
           </div>
         </div>
         <h4 style={{ textAlign: "center" }}>Track Bus</h4>
@@ -442,6 +411,9 @@ class TrackBus extends Component {
               markers={themarkers}
               onMarkerClick={this.handleMarkerClick}
               onCloseClick={this.handleCloseClick}
+              bounds={this.state.bounds}
+              //ref={"gmap"}
+              ref={map => (this._map = map)}
             />
           </div>
         </div>

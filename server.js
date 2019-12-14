@@ -145,6 +145,55 @@ if (process.env.NODE_ENV === "production") {
       .catch(err => console.log(err));
   });
 
+  app.get("/restapi/busforid/:id", (req, res) => {
+    const errors = {};
+    let id = req.params.id;
+    let query = {
+      _id: id
+    };
+    Bus.findOne(query)
+      .then(buses => {
+        if (buses) {
+          //console.log("in api", buses);
+          return res.json(buses);
+        } else {
+          errors.name = "Bus cannot be found";
+          return res.status(400).json(errors);
+        }
+      })
+      .catch(err => console.log(err));
+  });
+
+  app.get("/restapi/updatebus/:id/:lat/:lon", (req, res) => {
+    const errors = {};
+    let id = req.params.id;
+    let lat = req.params.lat;
+    let lon = req.params.lon;
+    const loc = { type: "Point", coordinates: [lon, lat] };
+    let query = {
+      _id: id
+    };
+
+    const updateobj = {
+      curlat: lat,
+      curlon: lon,
+      location: loc
+    };
+    var options = { new: true };
+    Bus.findOneAndUpdate(query, updateobj, options)
+
+      .then(buses => {
+        if (buses) {
+          //console.log("in api", buses);
+          return res.json(buses);
+        } else {
+          errors.name = "Bus cannot be found";
+          return res.status(400).json(errors);
+        }
+      })
+      .catch(err => console.log(err));
+  });
+
   app.get("/restapi/buses", (req, res) => {
     Bus.find()
       .then(buses => res.json(buses))
