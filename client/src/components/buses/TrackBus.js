@@ -105,6 +105,7 @@ class TrackBus extends Component {
     this.loadBuses = this.loadBuses.bind(this);
     this.onChange = this.onChange.bind(this);
     this.doBounds = this.doBounds.bind(this);
+    this.updateBus = this.updateBus.bind(this);
 
     //this.getBusLocation = this.getBusLocation.bind(this);
   }
@@ -210,15 +211,7 @@ class TrackBus extends Component {
     console.log("bounds", bounds.getCenter());
     //let tmap = this.refs.gmap;
     let tmap = this._map;
-    console.log("the tmap is", tmap);
-    //let tb = tmap.getBounds();
     let tb = tmap.getCenter();
-    console.log("the tb is", tb);
-
-    //console.log(this._map);
-    //this.refs.gmap.fitBounds(bounds);
-
-    //this._map.fitBounds(bounds);
   }
 
   getBusLocation() {
@@ -242,6 +235,35 @@ class TrackBus extends Component {
         };
         mary.push(posobj);
         this.setState({ markers: mary });
+      })
+      .catch(err => {
+        console.log("triggering error in actions", err.message);
+      });
+  }
+
+  updateBus() {
+    console.log("we are updating bus");
+    let cnt = this.state.cnt;
+    let link = "/api/buses/updatebus//5ded3d46c203da39c4d01cfa/100/100";
+    //http://wheredabus.herokuapp.com/restapi/updatebus/5ded3d46c203da39c4d01cfa/40/100
+    this.setState({ cnt: cnt + 1 });
+
+    //console.log("track bus cdm", link);
+    axios
+      .get(link)
+      .then(res => {
+        let bus = res.data;
+        console.log("bus", bus);
+        // let mary = [];
+        // let posobj = {
+        //   lat: bus.lat,
+        //   lng: bus.lon,
+        //   name: bus.name,
+        //   id: bus.ownerid,
+        //   adname: bus.route
+        // };
+        // mary.push(posobj);
+        // this.setState({ markers: mary });
       })
       .catch(err => {
         console.log("triggering error in actions", err.message);
@@ -396,6 +418,14 @@ class TrackBus extends Component {
               onClick={this.doBounds}
             >
               Bounds
+            </a>
+            <a
+              href=""
+              className="btn btn-info btn-block mt-4"
+              //onClick={this.onCancelClick.bind(this)}
+              onClick={this.updateBus}
+            >
+              Update
             </a>
           </div>
         </div>

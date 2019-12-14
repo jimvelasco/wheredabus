@@ -175,6 +175,8 @@ if (process.env.NODE_ENV === "production") {
     };
 
     const updateobj = {
+      lat: lat,
+      lon: lon,
       curlat: lat,
       curlon: lon,
       location: loc
