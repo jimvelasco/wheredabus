@@ -88,11 +88,13 @@ app.use("/api/buses", buses);
 
 const io = socketIo(server);
 let counter = 0;
+let globalsocket = null;
 
 io.on("connection", socket => {
-  console.log("New socket client connected"),
-    // setInterval(() => sendTimeToClient(socket), 30000);
-    socket.emit("fromapi", "CONNECTION SUCCESS");
+  globalsocket = socket;
+  console.log("New socket client connected");
+  // setInterval(() => sendTimeToClient(socket), 30000);
+  socket.emit("fromapi", "CONNECTION SUCCESS");
   // socket.on("toapi", function(msg) {
   //   counter = counter + 1;
   //   console.log("I received a private message by  saying ", msg);
@@ -261,7 +263,7 @@ if (process.env.NODE_ENV === "production") {
     let lat = req.params.lat;
     let lon = req.params.lon;
     console.log("we are promising to emit and return what lat lon");
-    socket.emit("fromapi", "here is the bus lat lon" + lat + " " + lon);
+    globalsocket.emit("fromapi", "here is the bus lat lon" + lat + " " + lon);
     return res.json({ now: "what" });
   });
 
