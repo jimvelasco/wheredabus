@@ -216,7 +216,7 @@ if (process.env.NODE_ENV === "production") {
       .then(buses => {
         if (buses) {
           //console.log("in api", buses);
-          socket.emit("fromapi", "here is the bus lat lon" + lat + " " + lon);
+          //socket.emit("fromapi", "here is the bus lat lon" + lat + " " + lon);
           return res.json(buses);
         } else {
           errors.name = "Bus cannot be found";
@@ -224,6 +224,29 @@ if (process.env.NODE_ENV === "production") {
         }
       })
       .catch(err => console.log(err));
+  });
+
+  app.get("/restapi/updatebussocket/:id/:lat/:lon", (req, res) => {
+    const errors = {};
+    let id = req.params.id;
+    let lat = req.params.lat;
+    let lon = req.params.lon;
+    const loc = { type: "Point", coordinates: [lon, lat] };
+    let query = {
+      _id: id
+    };
+
+    const updateobj = {
+      lat: lat,
+      lon: lon,
+      curlat: lat,
+      curlon: lon,
+      location: loc
+    };
+
+    var options = { new: true };
+
+    socket.emit("fromapi", "here is the bus lat lon" + lat + " " + lon);
   });
 
   app.get("/restapi/buses", (req, res) => {
