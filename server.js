@@ -243,9 +243,7 @@ if (process.env.NODE_ENV === "production") {
       curlon: lon,
       location: loc
     };
-
     console.log("we are promising to emit lat lon");
-
     var options = { new: true };
     return new Promise((resolve, reject) => {
       try {
@@ -255,6 +253,16 @@ if (process.env.NODE_ENV === "production") {
         reject(e);
       }
     });
+  });
+
+  app.get("/restapi/updatebussocketemit/:id/:lat/:lon", (req, res) => {
+    const errors = {};
+    let id = req.params.id;
+    let lat = req.params.lat;
+    let lon = req.params.lon;
+    console.log("we are promising to emit and return what lat lon");
+    socket.emit("fromapi", "here is the bus lat lon" + lat + " " + lon);
+    return res.json({ now: "what" });
   });
 
   app.get("/restapi/buses", (req, res) => {
