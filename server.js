@@ -249,8 +249,8 @@ if (process.env.NODE_ENV === "production") {
     var options = { new: true };
     return new Promise((resolve, reject) => {
       try {
-        socket.emit("fromapi", "here is the bus lat lon" + lat + " " + lon);
-        resolve("all is good");
+        // socket.emit("fromapi", "here is the bus lat lon" + lat + " " + lon);
+        resolve("DATA " + lat + " " + lon);
       } catch (e) {
         reject(e);
       }
