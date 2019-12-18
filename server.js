@@ -244,9 +244,17 @@ if (process.env.NODE_ENV === "production") {
       location: loc
     };
 
-    var options = { new: true };
+    console.log("we are promising to emit lat lon");
 
-    socket.emit("fromapi", "here is the bus lat lon" + lat + " " + lon);
+    var options = { new: true };
+    return new Promise((resolve, reject) => {
+      try {
+        socket.emit("fromapi", "here is the bus lat lon" + lat + " " + lon);
+        resolve("all is good");
+      } catch (e) {
+        reject(e);
+      }
+    });
   });
 
   app.get("/restapi/buses", (req, res) => {
