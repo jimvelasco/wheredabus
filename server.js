@@ -92,7 +92,7 @@ let counter = 0;
 io.on("connection", socket => {
   console.log("New socket client connected"),
     // setInterval(() => sendTimeToClient(socket), 30000);
-    socket.emit("fromapi", "we have a connection");
+    socket.emit("fromapi", "CONNECTION SUCCESS");
   // socket.on("toapi", function(msg) {
   //   counter = counter + 1;
   //   console.log("I received a private message by  saying ", msg);
@@ -102,7 +102,7 @@ io.on("connection", socket => {
   socket.on("toapi", function(msg) {
     counter = counter + 1;
     console.log("I received a private message by  saying ", msg);
-    socket.emit("fromapi", "here is the anwer " + msg + " " + counter);
+    socket.emit("fromapi", "here is msg " + msg + " " + counter);
   });
 
   socket.on("disconnect", reason =>
