@@ -20,8 +20,11 @@ const buses = require("./routes/api/buses");
 //const thumbnails = require("./routes/api/thumbnails");
 //const mimes = require("./routes/api/mimes");
 //const apitest = require("./routes/api/apitest");
+const http = require("http");
+const socketIo = require("socket.io");
 
 const app = express();
+const server = http.createServer(app);
 
 // Body Parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -82,6 +85,30 @@ app.use("/api/buses", buses);
 //   );
 //   next();
 // });
+
+const io = socketIo(server);
+let counter = 0;
+
+io.on("connection", socket => {
+  console.log("New socket client connected"),
+    // setInterval(() => sendTimeToClient(socket), 30000);
+    socket.emit("fromapi", "we have a connection");
+  // socket.on("toapi", function(msg) {
+  //   counter = counter + 1;
+  //   console.log("I received a private message by  saying ", msg);
+  //   socket.emit("fromapi", "here is the anwer " + msg + " " + counter);
+  // });
+
+  socket.on("toapi", function(msg) {
+    counter = counter + 1;
+    console.log("I received a private message by  saying ", msg);
+    socket.emit("fromapi", "here is the anwer " + msg + " " + counter);
+  });
+
+  socket.on("disconnect", reason =>
+    console.log("Client socket disconnected", reason)
+  );
+});
 
 // Server static assets if in production
 if (process.env.NODE_ENV === "production") {
@@ -181,12 +208,15 @@ if (process.env.NODE_ENV === "production") {
       curlon: lon,
       location: loc
     };
+
     var options = { new: true };
+
     Bus.findOneAndUpdate(query, updateobj, options)
 
       .then(buses => {
         if (buses) {
           //console.log("in api", buses);
+          socket.emit("fromapi", "here is the bus lat lon" + lat + " " + lon);
           return res.json(buses);
         } else {
           errors.name = "Bus cannot be found";
@@ -218,6 +248,45 @@ if (process.env.NODE_ENV === "production") {
 
 const port = process.env.PORT || 5000;
 
-app.listen(port, () => console.log(`Server is running on port ${port}`));
+//const server = app.listen(port, () =>
+server.listen(port, () => console.log(`Server is running on port ${port}`));
+
+// const io = socketIo(server);
+// let counter = 0;
+
+// io.on("connection", socket => {
+//   console.log("New socket client connected"),
+//     // setInterval(() => sendTimeToClient(socket), 30000);
+//     socket.emit("fromapi", "we have a connection");
+//   // socket.on("toapi", function(msg) {
+//   //   counter = counter + 1;
+//   //   console.log("I received a private message by  saying ", msg);
+//   //   socket.emit("fromapi", "here is the anwer " + msg + " " + counter);
+//   // });
+
+//   socket.on("toapi", function(msg) {
+//     counter = counter + 1;
+//     console.log("I received a private message by  saying ", msg);
+//     socket.emit("fromapi", "here is the anwer " + msg + " " + counter);
+//   });
+
+//   socket.on("disconnect", reason =>
+//     console.log("Client socket disconnected", reason)
+//   );
+// });
+
+const sendTimeToClient = async socket => {
+  let cdate = new Date();
+  let h = cdate.getHours().toString();
+  let m = cdate.getMinutes().toString();
+  let s = cdate.getSeconds().toString();
+  if (h.length == 1) h = "0" + h;
+  if (m.length == 1) m = "0" + m;
+  if (s.length == 1) s = "0" + s;
+  let timestr = h + ":" + m + ":" + s;
+  timestr = timestr + " count:" + counter.toString();
+  counter = counter + 1;
+  socket.emit("fromapi", timestr);
+};
 
 //mongodb://<dbuser>:<dbpassword>@ds061188.mlab.com:61188/devconnect
