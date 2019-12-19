@@ -90,27 +90,47 @@ const io = socketIo(server);
 let counter = 0;
 let globalsocket = null;
 
-io.on("connection", socket => {
-  globalsocket = socket;
-  console.log("New socket client connected");
-  // setInterval(() => sendTimeToClient(socket), 30000);
-  socket.emit("fromapi", "CONNECTION SUCCESS");
-  // socket.on("toapi", function(msg) {
-  //   counter = counter + 1;
-  //   console.log("I received a private message by  saying ", msg);
-  //   socket.emit("fromapi", "here is the anwer " + msg + " " + counter);
-  // });
+io.sockets.on("connection", function(socket) {
+  // once a client has connected, we expect to get a ping from them saying what room they want to join
+  socket.on("room", function(room) {
+    //socket.set("room", room);
+    console.log("connected server and joining room", room);
+    socket.join(room);
+  });
 
-  socket.on("toapi", function(msg) {
+  socket.on("toapi", function(room, msg) {
     counter = counter + 1;
-    console.log("I received a private message by  saying ", msg);
-    socket.emit("fromapi", "here is msg " + msg + " " + counter);
+    console.log("Receive and broadcast ", room, msg);
+    let obj = {};
+    obj["msg"] = "built on server";
+    obj["room"] = room;
+    obj["data"] = JSON.parse(msg);
+    let ostr = JSON.stringify(obj);
+    // io.emit("broadcast", "broadcast " + msg);
+    io.sockets.in(room).emit("broadcast", ostr);
   });
 
   socket.on("disconnect", reason =>
     console.log("Client socket disconnected", reason)
   );
 });
+
+// io.on("connection", socket => {
+//   globalsocket = socket;
+//   console.log("New socket client connected");
+//   // setInterval(() => sendTimeToClient(socket), 30000);
+//   socket.emit("fromapi", "CONNECTION SUCCESS");
+
+//   socket.on("toapi", function(msg) {
+//     counter = counter + 1;
+//     console.log("I received a private message by saying ", msg);
+//     io.emit("broadcast", "broadcast " + msg);
+//   });
+
+//   socket.on("disconnect", reason =>
+//     console.log("Client socket disconnected", reason)
+//   );
+// });
 
 // Server static assets if in production
 if (process.env.NODE_ENV === "production") {
@@ -263,7 +283,7 @@ if (process.env.NODE_ENV === "production") {
     let lat = req.params.lat;
     let lon = req.params.lon;
     console.log("we are promising to emit and return what lat lon");
-    globalsocket.emit("fromapi", "here is the bus lat lon" + lat + " " + lon);
+    globalsocket.emit("fromapi", "here is the bus lat lon " + lat + " " + lon);
     return res.json({ now: "what" });
   });
 

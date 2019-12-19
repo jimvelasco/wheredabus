@@ -4,6 +4,7 @@ import axios from "axios";
 import mapicon from "../../img/blue.png";
 import SelectCategoryGroup from "../common/SelectCategoryGroup";
 import TextFieldGroup from "../common/TextFieldGroup";
+import socketIO from "socket.io-client";
 
 import {
   withGoogleMap,
@@ -93,7 +94,8 @@ class TrackBus extends Component {
       selected_location: "",
       distance: 2000,
       bounds: null,
-      errors: {}
+      errors: {},
+      socket: socketIO("http://127.0.0.1:5000")
     };
     this._map = null;
     //console.log(props);
@@ -106,6 +108,8 @@ class TrackBus extends Component {
     this.onChange = this.onChange.bind(this);
     this.doBounds = this.doBounds.bind(this);
     this.updateBus = this.updateBus.bind(this);
+    this.doSocket = this.doSocket.bind(this);
+    this.counter = 1;
 
     //this.getBusLocation = this.getBusLocation.bind(this);
   }
@@ -116,9 +120,81 @@ class TrackBus extends Component {
 
   componentDidMount() {
     console.log("cdm");
+    let room = "yampa";
+    this.state.socket.emit("room", room);
+
+    this.state.socket.on("broadcast", function(data) {
+      //setSocketMessage(data);
+      console.log("we got a CWRP BROADCASR WEB response from socket", data);
+    });
+
+    let sock = this.state.socket;
+
+    // setInterval(function() {
+    //   let objstr = "now is the time";
+    //   sock.emit("toapi", objstr);
+    // });
+  }
+  doSocket(e) {
+    e.preventDefault();
+    let sock = this.state.socket;
+    // setInterval(function() {
+    let room = "yampa";
+    //let objstr = "now is the time";
+    // sb
+    let lat = 40.4534379581993;
+    let lon = -106.80503115088976;
+    // bldr
+    // let lat = 37.785834;
+    // let lon = -122.406417;
+    let ulat = lat + this.counter / 2000;
+    let ulon = lon + this.counter / 2000;
+    this.counter = this.counter + 1;
+    let obj = {
+      busid: "5ded3cf5c203da39c4d01cf6",
+      busname: "sunburst",
+      lat: ulat,
+      lon: ulon
+    };
+    let objstr = JSON.stringify(obj);
+    sock.emit("toapi", room, objstr);
+    //  }, 3000);
+  }
+
+  o_componentDidMount() {
+    console.log("cdm");
     //let bl = dummy_data.map
     let bl = dummy_data.map((obj, index) => obj.name);
     this.setState({ location_list: bl });
+    this.state.socket.on("fromapi", function(data) {
+      //setSocketMessage(data);
+      console.log("we got a WEB response from socket", data);
+      if (data === "CONNECTION SUCCESS") {
+        // getBusLocationAsync();
+      }
+    });
+
+    this.state.socket.on("broadcast", function(data) {
+      //setSocketMessage(data);
+      console.log("we got a CWRP BROADCASR WEB response from socket", data);
+    });
+
+    let sock = this.state.socket;
+
+    // setInterval(function() {
+    //   let objstr = "now is the time";
+    //   sock.emit("toapi", objstr);
+    // });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log("cwrp");
+    //let bl = dummy_data.map
+
+    this.state.socket.on("fromapi", function(data) {
+      //setSocketMessage(data);
+      console.log("we got a CWRP WEB response from socket", data);
+    });
   }
 
   loadBuses(e) {
@@ -270,25 +346,25 @@ class TrackBus extends Component {
       });
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log("cwrp");
-    //console.log("manage photos current props ", this.props);
-    //console.log("business map nextProps ", nextProps);
-    // let bizes = nextProps.advertise.businesses;
-    // let mary = [];
-    // bizes.map((biz, index) => {
-    //   mary.push({
-    //     lat: biz.latitude,
-    //     lng: biz.longitude,
-    //     name: biz.name,
-    //     id: biz._id,
-    //     show: false
-    //   });
-    //   this.setState({ markers: mary });
-    // });
-    //console.log("maps next props cdm", nextProps);
-    //this.setState({ lat: nextProps.lat, lon: nextProps.lon });
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   console.log("cwrp");
+  //   //console.log("manage photos current props ", this.props);
+  //   //console.log("business map nextProps ", nextProps);
+  //   // let bizes = nextProps.advertise.businesses;
+  //   // let mary = [];
+  //   // bizes.map((biz, index) => {
+  //   //   mary.push({
+  //   //     lat: biz.latitude,
+  //   //     lng: biz.longitude,
+  //   //     name: biz.name,
+  //   //     id: biz._id,
+  //   //     show: false
+  //   //   });
+  //   //   this.setState({ markers: mary });
+  //   // });
+  //   //console.log("maps next props cdm", nextProps);
+  //   //this.setState({ lat: nextProps.lat, lon: nextProps.lon });
+  // }
 
   // handleClick(event) {
   //   //this.setState({ [e.target.name]: e.target.value });
@@ -426,6 +502,14 @@ class TrackBus extends Component {
               onClick={this.updateBus}
             >
               Update
+            </a>
+            <a
+              href=""
+              className="btn btn-info btn-block mt-4"
+              //onClick={this.onCancelClick.bind(this)}
+              onClick={this.doSocket}
+            >
+              Socket
             </a>
           </div>
         </div>
