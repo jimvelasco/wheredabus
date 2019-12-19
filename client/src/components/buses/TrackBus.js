@@ -95,7 +95,8 @@ class TrackBus extends Component {
       distance: 2000,
       bounds: null,
       errors: {},
-      socket: socketIO("http://127.0.0.1:5000")
+      //socket: socketIO("http://127.0.0.1:5000")
+      socket: socketIO("http://wheredabus.herokuapp.com")
     };
     this._map = null;
     //console.log(props);
