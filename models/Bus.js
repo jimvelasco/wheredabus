@@ -58,6 +58,14 @@ const BusSchema = new Schema({
     type: pointSchema,
     required: true
   },
+  status: {
+    type: Number,
+    default: 0
+  },
+
+  driver: {
+    type: String
+  },
 
   date: {
     type: Date,

@@ -92,6 +92,7 @@ let globalsocket = null;
 
 io.sockets.on("connection", function(socket) {
   // once a client has connected, we expect to get a ping from them saying what room they want to join
+  console.log("We have a socket connection wdb");
   socket.on("room", function(room) {
     //socket.set("room", room);
     console.log("connected server and joining room", room);
@@ -111,7 +112,7 @@ io.sockets.on("connection", function(socket) {
   });
 
   socket.on("disconnect", reason =>
-    console.log("Client socket disconnected", reason)
+    console.log("Client socket disconnected WDB", reason)
   );
 });
 
@@ -213,7 +214,7 @@ if (process.env.NODE_ENV === "production") {
       .catch(err => console.log(err));
   });
 
-  app.get("/restapi/updatebus/:id/:lat/:lon", (req, res) => {
+  app.get("/restapi/updatebuslatlon/:id/:lat/:lon", (req, res) => {
     const errors = {};
     let id = req.params.id;
     let lat = req.params.lat;
@@ -235,6 +236,35 @@ if (process.env.NODE_ENV === "production") {
 
     Bus.findOneAndUpdate(query, updateobj, options)
 
+      .then(buses => {
+        if (buses) {
+          //console.log("in api", buses);
+          //socket.emit("fromapi", "here is the bus lat lon" + lat + " " + lon);
+          return res.json(buses);
+        } else {
+          errors.name = "Bus cannot be found";
+          return res.status(400).json(errors);
+        }
+      })
+      .catch(err => console.log(err));
+  });
+
+  app.get("/restapi/updatebusstatus/:id/:status/:driver", (req, res) => {
+    const errors = {};
+    let id = req.params.id;
+    let status = req.params.status;
+    let driver = req.params.driver;
+    let query = {
+      _id: id
+    };
+
+    const updateobj = {
+      status: status,
+      driver: driver
+    };
+    var options = { new: true };
+
+    Bus.findOneAndUpdate(query, updateobj, options)
       .then(buses => {
         if (buses) {
           //console.log("in api", buses);

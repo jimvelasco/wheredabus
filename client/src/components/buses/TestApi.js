@@ -79,7 +79,7 @@ const GoogleMapExample = withGoogleMap(props => (
   </GoogleMap>
 ));
 
-class TrackBus extends Component {
+class TestApi extends Component {
   constructor(props) {
     super(props);
     console.log("tb props", props);
@@ -90,8 +90,15 @@ class TrackBus extends Component {
       lat: null,
       lon: null,
       cnt: 2,
-      location_list: ["one", "two"],
-      selected_location: "",
+      location_list: [
+        "yampa",
+        "eagle",
+        "gondola",
+        "sunburst",
+        "walgreens",
+        "downtown"
+      ],
+      selected_location: "yampa",
       distance: 2000,
       bounds: null,
       errors: {},
@@ -544,4 +551,4 @@ const mapStateToProps = state => ({
 });
 // the state.auth above comes from rootReducer in index.js in reducers.
 
-export default connect(mapStateToProps, {})(TrackBus);
+export default connect(mapStateToProps, {})(TestApi);

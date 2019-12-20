@@ -17,6 +17,7 @@ import Login from "./components/auth/Login";
 import BusesMapMain from "./components/buses/BusesMapMain";
 import RegisterBus from "./components/buses/RegisterBus";
 import TrackBus from "./components/buses/TrackBus";
+import TestApi from "./components/buses/TestApi";
 import GMap from "./components/common/GMap";
 
 import Dashboard from "./components/dashboard/Dashboard";
@@ -34,6 +35,7 @@ function App() {
           <Route exact path="/busesmain" component={BusesMapMain} />
           <Route exact path="/registerbus" component={RegisterBus} />
           <Route exact path="/trackbus" component={TrackBus} />
+          <Route exact path="/testapi" component={TestApi} />
           <Route exact path="/gmap" component={GMap} />
 
           {/* <header className="App-header">
