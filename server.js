@@ -95,20 +95,56 @@ io.sockets.on("connection", function(socket) {
   console.log("We have a socket connection wdb");
   socket.on("room", function(room) {
     //socket.set("room", room);
-    console.log("connected server and joining room", room);
+    console.log("joining room", room);
     socket.join(room);
   });
 
-  socket.on("toapi", function(room, msg) {
+  socket.on("toapi", function(room, msgobj) {
     counter = counter + 1;
-    console.log("Receive and broadcast ", room, msg);
+    console.log(
+      "Received message and broadcast ",
+      room,
+      JSON.stringify(msgobj)
+    );
     let obj = {};
     obj["msg"] = "built on server";
     obj["room"] = room;
-    obj["data"] = JSON.parse(msg);
+    obj["data"] = JSON.stringify(msgobj);
     let ostr = JSON.stringify(obj);
     // io.emit("broadcast", "broadcast " + msg);
     io.sockets.in(room).emit("broadcast", ostr);
+    //socket.to(room).emit("broadcast", ostr);
+  });
+
+  socket.on("leaveroom", function(room) {
+    counter = counter + 1;
+    console.log("Receive and broadcast ", room);
+    let obj = {};
+    obj["msg"] = "we are leaving rooms";
+    obj["room"] = room;
+    console.log("leaving room ", room);
+
+    let ostr = JSON.stringify(obj);
+    // io.emit("broadcast", "broadcast " + msg);
+    socket.leave(room);
+    let rms = "we have left room " + room;
+    io.sockets.in(room).emit("broadcast", ostr);
+  });
+
+  socket.on("get_rooms", function() {
+    var room_list = [];
+    for (var room in io.sockets.adapter.rooms) {
+      if (room.indexOf("/chat_infra") == 0) {
+        // var roomName = room.replace("/chat_infra/", "");
+        // room_list[roomName] = io.sockets.adapter.rooms[room].length;
+      } else {
+        //var roomName = room;
+        room_list.push(room);
+        //room_list.roomName = io.sockets.adapter.rooms[room].length;
+      }
+    }
+    console.log("getting rooms ", room_list);
+    socket.emit("broadcast", room_list);
   });
 
   socket.on("disconnect", reason =>
