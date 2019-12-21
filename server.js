@@ -109,7 +109,7 @@ io.sockets.on("connection", function(socket) {
     let obj = {};
     obj["msg"] = "built on server";
     obj["room"] = room;
-    obj["data"] = JSON.stringify(msgobj);
+    obj["data"] = msgobj; //JSON.stringify(msgobj);
     let ostr = JSON.stringify(obj);
     // io.emit("broadcast", "broadcast " + msg);
     io.sockets.in(room).emit("broadcast", ostr);
