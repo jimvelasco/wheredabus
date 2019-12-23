@@ -116,6 +116,23 @@ io.sockets.on("connection", function(socket) {
     //socket.to(room).emit("broadcast", ostr);
   });
 
+  socket.on("set_location", function(room, msgobj) {
+    counter = counter + 1;
+    console.log(
+      "Received message and broadcast ",
+      room,
+      JSON.stringify(msgobj)
+    );
+    let obj = {};
+    obj["msg"] = "built on server";
+    obj["room"] = room;
+    obj["data"] = msgobj; //JSON.stringify(msgobj);
+    let ostr = JSON.stringify(obj);
+    // io.emit("broadcast", "broadcast " + msg);
+    io.sockets.in(room).emit("broadcast_location", ostr);
+    //socket.to(room).emit("broadcast", ostr);
+  });
+
   socket.on("leaveroom", function(room) {
     counter = counter + 1;
     console.log("Receive and broadcast ", room);
