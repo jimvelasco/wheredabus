@@ -72,6 +72,11 @@ class TestApi extends Component {
       console.log("BROADCAST response from socket", data);
     });
 
+    this.state.socket.on("broadcast_location", function(data) {
+      //setSocketMessage(data);
+      console.log("BROADCAST LOCATION response from socket", data);
+    });
+
     let sock = this.state.socket;
 
     // setInterval(function() {
@@ -88,6 +93,10 @@ class TestApi extends Component {
     sock.on("broadcast", function(data) {
       //setSocketMessage(data);
       console.log("BROADCAST reconnect response from socket", data);
+    });
+    this.state.socket.on("broadcast_location", function(data) {
+      //setSocketMessage(data);
+      console.log("BROADCAST LOCATION response from socket", data);
     });
   }
 
@@ -114,7 +123,7 @@ class TestApi extends Component {
       lon: ulon
     };
     let objstr = JSON.stringify(obj);
-    sock.emit("toapi", room, objstr);
+    sock.emit("set_location", room, objstr);
     //  }, 3000);
   }
 
